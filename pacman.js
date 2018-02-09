@@ -81,6 +81,9 @@ function eatGhost(ghost) {
   if (ghost.edible === false) {
     console.log('\n' + ghost.name + ' eats Pacman');
     lives -= 1;
+    if (lives < 0) {
+      process.exit();
+    }
   }
 }
 
