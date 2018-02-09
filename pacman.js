@@ -55,14 +55,21 @@ function clearScreen() {
 
 function displayStats() {
   console.log('Score: ' + score + '     Lives: ' + lives);
-  console.log('\nPower Pellets: ' + powerPellets);
+  console.log('\nPower-Pellets: ' + powerPellets);
 }
-
+var edibility = 'inedible';
 function displayMenu() {
   console.log('\n\nSelect Option:\n');  // each \n creates a new line
   console.log('(d) Eat Dot');
+  if (powerPellets > 0) {
+    console.log('(p) Eat Power-Pellet');
+  }
   ghosts.forEach(function(ghost){
-    console.log('(' + ghost.menuOption + ') Eat ' + ghost.name);
+    edibility = 'inedible';
+    if (ghost.edible === true) {
+      edibility = 'edible';
+    }
+    console.log('(' + ghost.menuOption + ') Eat ' + ghost.name + ' ' + edibility);
   });
   console.log('(q) Quit');
 }
@@ -72,12 +79,23 @@ function displayPrompt() {
   process.stdout.write('\nWaka Waka :v '); // :v is the Pac-Man emoji.
 }
 
-
-// Menu Options
 function eatDot() {
   console.log('\nChomp!');
   score += 10;
 }
+
+function eatPowerPellet() {
+  if (powerPellets <= 0) {
+    console.log('\nNo Power-Pellets left!');
+  } else {
+    score += 50;
+    powerPellets -= 1;
+    ghosts.forEach(function(ghost){
+      ghost.edible = true;
+    });
+  }
+}
+// Menu Options
 
 function eatGhost(ghost) {
   if (ghost.edible === false) {
@@ -86,6 +104,10 @@ function eatGhost(ghost) {
     if (lives < 0) {
       process.exit();
     }
+  } else {
+    console.log('\nPacman eats ' + ghost.name + ', the ' + ghost.character + ' ghost!');
+    score += 200;
+    ghost.edible = false;
   }
 }
 
@@ -99,6 +121,9 @@ function processInput(key) {
       break;
     case 'd':
       eatDot();
+      break;
+    case 'p':
+      eatPowerPellet();
       break;
     case '1':
       eatGhost(ghosts[0]);
